@@ -1,0 +1,38 @@
+server:
+  port: 8092
+  servlet:
+    context-path: /inventory
+spring:
+  application:
+    name: InventoryService
+  datasource:
+    url: jdbc:postgresql://localhost:5432/inventory?CreateDatabaseIfNotExist=true
+    username: postgres
+    password: root
+    initialization-mode: always
+    driver-class-name: org.postgresql.Driver
+  jpa:
+    hibernate:
+      ddl-auto: create
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+        namingStrategy: org.hibernate.cfg.PhysicalNamingStrategy
+  cloud:
+    discovery:
+      enabled: false
+      
+swagger:
+  url: http://localhost:8092/inventory
+  
+eureka:
+  client:
+    register-with-eureka: true
+    fetch-registry: true
+    service-url:
+      defaultZone: https://service-registry.test.restaurantonesolution.com/eureka
+  instance:
+    hostname: localhost
+logging:
+  level:
+    '[com.ros.inventory]': DEBUG
