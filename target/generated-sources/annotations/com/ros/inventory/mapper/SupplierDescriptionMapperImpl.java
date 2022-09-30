@@ -15,8 +15,8 @@ import javax.annotation.processing.Generated;
 
 @Generated(
     value = "org.mapstruct.ap.MappingProcessor",
-    date = "2022-09-21T13:30:18+0530",
-    comments = "version: 1.4.1.Final, compiler: Eclipse JDT (IDE) 1.4.50.v20210914-1429, environment: Java 17.0.2 (Eclipse Adoptium)"
+    date = "2022-09-29T14:46:45+0530",
+    comments = "version: 1.4.2.Final, compiler: javac, environment: Java 11.0.16 (Oracle Corporation)"
 )
 public class SupplierDescriptionMapperImpl implements SupplierDescriptionMapper {
 
@@ -98,11 +98,11 @@ public class SupplierDescriptionMapperImpl implements SupplierDescriptionMapper 
 
         ContactDtoBuilder contactDto = ContactDto.builder();
 
+        contactDto.firstName( supplierContact.getFirstName() );
+        contactDto.middleName( supplierContact.getMiddleName() );
+        contactDto.lastName( supplierContact.getLastName() );
         contactDto.email( supplierContact.getEmail() );
         contactDto.fax( supplierContact.getFax() );
-        contactDto.firstName( supplierContact.getFirstName() );
-        contactDto.lastName( supplierContact.getLastName() );
-        contactDto.middleName( supplierContact.getMiddleName() );
         contactDto.mobile( supplierContact.getMobile() );
         contactDto.telephone( supplierContact.getTelephone() );
 
@@ -203,11 +203,11 @@ public class SupplierDescriptionMapperImpl implements SupplierDescriptionMapper 
 
         BankDtoBuilder bankDto = BankDto.builder();
 
+        bankDto.bankName( supplierBankInfo.getBankName() );
+        bankDto.bankBranchName( supplierBankInfo.getBankBranchName() );
         bankDto.accountHolderName( supplierBankInfo.getAccountHolderName() );
         bankDto.accountNumber( supplierBankInfo.getAccountNumber() );
-        bankDto.bankBranchName( supplierBankInfo.getBankBranchName() );
         bankDto.bankIFSCCode( supplierBankInfo.getBankIFSCCode() );
-        bankDto.bankName( supplierBankInfo.getBankName() );
 
         return bankDto.build();
     }
