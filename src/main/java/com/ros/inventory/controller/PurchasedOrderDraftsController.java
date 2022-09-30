@@ -1,9 +1,12 @@
 package com.ros.inventory.controller;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
 import com.ros.inventory.Repository.PurchaseRepository;
+import com.ros.inventory.Repository.SupplierRepository;
+import com.ros.inventory.entities.OrderStatus;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -36,6 +39,10 @@ public class PurchasedOrderDraftsController
 
 	@Autowired
 	private PurchaseRepository purchaseRepository;
+
+	@Autowired
+	private SupplierRepository supplierRepository;
+
 /* .............. Saving the purchaseOrder in Drafts ........*/
 	@PostMapping("/add")
 	@ResponseBody
@@ -160,6 +167,33 @@ public class PurchasedOrderDraftsController
 
 		return response;
 	}
-	
+
+	//Drafts information
+	@GetMapping(value = "/getDrafts")
+	@Operation(summary = "info of all drafts")
+	public List<DraftsDto> getDrafts() {
+		List<PurchaseOrder> purchaseOrderList = new ArrayList<>();
+
+		List<DraftsDto> draftsDtoList = new ArrayList<>();
+
+		purchaseOrderList = purchaseRepository.getAllByPurchaseOrderStatus(OrderStatus.drafts);
+
+		for (PurchaseOrder order : purchaseOrderList) {
+			DraftsDto draft = new DraftsDto();
+
+			draft.setPurchasedNumber(order.getPurchasedId());
+			draft.setPurchaseDate(String.valueOf(order.getPurchaseOrderDate()));
+
+			Supplier supplier = supplierRepository.getBySupplierId(order.getSupplier().getSupplierId());
+
+			draft.setSupplierName(supplier.getSupplierBasic().getSupplierBusinessName());
+			draft.setSupplierType(String.valueOf(supplier.getSupplierType()));
+			draft.setValue(order.getTotalAmount());
+
+			draftsDtoList.add(draft);
+		}
+
+		return draftsDtoList;
+	}
 
 }

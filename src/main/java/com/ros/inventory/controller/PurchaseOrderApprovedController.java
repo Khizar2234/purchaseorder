@@ -2,8 +2,11 @@ package com.ros.inventory.controller;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.function.Predicate;
 
+import com.ros.inventory.Repository.SupplierRepository;
+import com.ros.inventory.controller.dto.ApprovedDto;
+import com.ros.inventory.entities.OrderStatus;
+import com.ros.inventory.entities.Supplier;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -16,7 +19,6 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.ros.inventory.Exception.InventoryException;
 import com.ros.inventory.Repository.PurchaseRepository;
-import com.ros.inventory.controller.dto.DraftsDto;
 import com.ros.inventory.entities.PurchaseOrder;
 import com.ros.inventory.service.IPurchaseOrderApprovedManager;
 
@@ -31,6 +33,8 @@ public class PurchaseOrderApprovedController {
 	@Autowired
 	private PurchaseRepository pRepo;
 
+	@Autowired
+	private SupplierRepository supplierRepository;
 	@GetMapping("/view")
 	@ResponseBody
 	@Operation(summary = "Showing the Items Which are in Approve Section")
@@ -115,6 +119,36 @@ public class PurchaseOrderApprovedController {
 		}
 
 		return total;
+	}
+
+
+	//Drafts information
+	@GetMapping(value = "/getApproved")
+	@Operation(summary = "info of all drafts")
+	public List<ApprovedDto> getApproved() {
+		List<PurchaseOrder> purchaseOrderList = new ArrayList<>();
+
+		List<ApprovedDto> approvedDtoList = new ArrayList<>();
+
+		purchaseOrderList = pRepo.getAllByPurchaseOrderStatus(OrderStatus.approved);
+
+		for (PurchaseOrder order : purchaseOrderList) {
+			ApprovedDto approved = new ApprovedDto();
+
+			approved.setPurchasedNumber(order.getPurchasedId());
+			approved.setPurchaseDate(String.valueOf(order.getPurchaseOrderDate()));
+
+			Supplier supplier = supplierRepository.getBySupplierId(order.getSupplier().getSupplierId());
+
+			approved.setSupplierName(supplier.getSupplierBasic().getSupplierBusinessName());
+			approved.setSupplierType(String.valueOf(supplier.getSupplierType()));
+			approved.setValue(order.getTotalAmount());
+			approved.setStatus(order.getPurchaseOrderStatus());
+
+			approvedDtoList.add(approved);
+		}
+
+		return approvedDtoList;
 	}
 
 }
