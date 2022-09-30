@@ -59,7 +59,7 @@ public class PurchaseOrderRejectedController {
 	@GetMapping("view/total")
 	@Operation(summary = "View total amount of submitted orders")
 	public double showTotal() throws InventoryException {
-		List<PurchaseOrder> purchaseOrderList = purchaseRepository.showByStatus("submited");
+		List<PurchaseOrder> purchaseOrderList = purchaseRepository.showByStatus("rejected");
 		double total = 0.0;
 
 		for (PurchaseOrder purchaseOrder : purchaseOrderList) {

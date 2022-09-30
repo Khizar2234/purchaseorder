@@ -37,6 +37,7 @@ public class PurchaseOrderSiteTransferManager implements IPurchaseOrderSiteTrans
 
 	@Autowired
 	private ApprovedViewMapper apMapper;
+
 	@Autowired
 	private ProductRepository productRepo;
 	@Autowired

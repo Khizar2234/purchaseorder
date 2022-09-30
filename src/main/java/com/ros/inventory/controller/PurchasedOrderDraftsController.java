@@ -31,7 +31,6 @@ import io.swagger.v3.oas.annotations.Operation;
 @RestController
 @RequestMapping("/purchase/drafts")
 @CrossOrigin("*")
-
 public class PurchasedOrderDraftsController
 {
 	@Autowired

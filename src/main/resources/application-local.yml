@@ -8,7 +8,7 @@ spring:
   datasource:
     url: jdbc:postgresql://localhost:5432/inventory
     username: postgres
-    password: postgres
+    password: Database@001
     initialization-mode: always
     driver-class-name: org.postgresql.Driver
   jpa:

@@ -1,5 +1,10 @@
 package com.ros.inventory.controller;
 
+import com.ros.inventory.Repository.SupplierRepository;
+import com.ros.inventory.controller.dto.SiTeTransfersDto;
+import com.ros.inventory.entities.OrderStatus;
+import com.ros.inventory.entities.PurchaseOrder;
+import com.ros.inventory.entities.Supplier;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -15,6 +20,9 @@ import com.ros.inventory.service.IPurchaseOrderSiteTransferManager;
 
 import io.swagger.v3.oas.annotations.Operation;
 
+import java.util.ArrayList;
+import java.util.List;
+
 
 @RestController
 @RequestMapping("/purchase/sitetransfer")
@@ -23,7 +31,41 @@ public class PurchaseOrderSiteTransferController {
 	@Autowired
 	private IPurchaseOrderSiteTransferManager sitetransfer;
 	@Autowired
-	private PurchaseRepository pRepo;
+	private PurchaseRepository purchaseRepository;
+
+	@Autowired
+	private SupplierRepository supplierRepository;
+
+	@GetMapping(value = "/getSiteTransfer")
+	@Operation(summary = "info of all Site transfers")
+	public List<SiTeTransfersDto> getSubmitted() {
+		List<PurchaseOrder> purchaseOrderList = new ArrayList<>();
+
+		List<SiTeTransfersDto> siteTranferDtoList = new ArrayList<>();
+
+		purchaseOrderList = purchaseRepository.getAllByPurchaseOrderStatus(OrderStatus.exported);
+
+		for (PurchaseOrder order : purchaseOrderList) {
+			SiTeTransfersDto siteTranfer = new SiTeTransfersDto();
+
+			siteTranfer.setDate(String.valueOf(order.getPurchaseOrderDate()));
+
+			Supplier supplier = supplierRepository.getBySupplierId(order.getSupplier().getSupplierId());
+
+			siteTranfer.setSupplierName(supplier.getSupplierBasic().getSupplierBusinessName());
+			siteTranfer.setTransferType(order.getTransferType());
+			siteTranfer.setTotalValue(order.getTotalAmount());
+			siteTranfer.setNoOfProducts(order.getSupplier().getProducts().size());
+
+
+
+			siteTranferDtoList.add(siteTranfer);
+		}
+
+
+
+		return siteTranferDtoList;
+	}
 
 	  /*Showing the Details which are present in SiteTransfer Section */	
 	   @GetMapping("/view")

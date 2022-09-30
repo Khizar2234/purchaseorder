@@ -41,6 +41,10 @@ public class PurchaseOrder implements Serializable
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	@Column(name ="purchase_id", length = 8)
 	private UUID purchasedId;
+
+	/*@GeneratedValue(strategy = GenerationType.AUTO)
+	@Column(name = "purchase_number")
+	private long purchaseNumber;*/
 	
 	@Column(name ="purchase_order_date")
 	private LocalDate purchaseOrderDate;

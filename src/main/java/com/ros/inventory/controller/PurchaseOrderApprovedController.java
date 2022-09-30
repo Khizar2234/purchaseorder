@@ -109,7 +109,7 @@ public class PurchaseOrderApprovedController {
 	}
 
 	@GetMapping("view/total")
-	@Operation(summary = "View total amount of submitted orders")
+	@Operation(summary = "View total amount of approved orders")
 	public double showTotal() throws InventoryException {
 		List<PurchaseOrder> purchaseOrderList = pRepo.showByStatus("approved");
 		double total = 0.0;

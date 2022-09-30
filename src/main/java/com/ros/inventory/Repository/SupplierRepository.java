@@ -9,4 +9,5 @@ import java.util.UUID;
 public interface SupplierRepository extends JpaRepository<Supplier, UUID> {
 
     Supplier getBySupplierId(UUID id);
+
 }
