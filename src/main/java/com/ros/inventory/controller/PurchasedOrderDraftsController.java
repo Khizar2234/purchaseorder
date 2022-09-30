@@ -3,6 +3,7 @@ package com.ros.inventory.controller;
 import java.util.List;
 import java.util.UUID;
 
+import com.ros.inventory.Repository.PurchaseRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -32,6 +33,9 @@ public class PurchasedOrderDraftsController
 {
 	@Autowired
 	private  IPurchaseOrderManager purchaseorder;
+
+	@Autowired
+	private PurchaseRepository purchaseRepository;
 /* .............. Saving the purchaseOrder in Drafts ........*/
 	@PostMapping("/add")
 	@ResponseBody
@@ -92,6 +96,19 @@ public class PurchasedOrderDraftsController
 				}
 				return response;	
 	   }
+
+	@GetMapping("view/total")
+	@Operation(summary = "View total amount of submitted orders")
+	public double showTotal() throws InventoryException {
+		List<PurchaseOrder> purchaseOrderList = purchaseRepository.showByStatus("drafts");
+		double total = 0.0;
+
+		for (PurchaseOrder purchaseOrder : purchaseOrderList) {
+			total = total + purchaseOrder.getTotalAmount();
+		}
+
+		return total;
+	}
 /*...............Deleting the data in Drafts............*/	
 	   @DeleteMapping("/delete/{id}")
 	   @ResponseBody

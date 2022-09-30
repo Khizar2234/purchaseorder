@@ -3,6 +3,7 @@ package com.ros.inventory.controller;
 import java.util.List;
 import java.util.UUID;
 
+import com.ros.inventory.Repository.PurchaseRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -32,6 +33,9 @@ public class PurchasedOrderSubmittedController {
 	
 	@Autowired
 	private  IPurchasedOrderSubmittedManager purchaseorderSubmitted;
+
+	@Autowired
+	PurchaseRepository purchaseRepository;
 	
 	/*.............Saving Purchase Order in Submitted section........*/
 	@PostMapping("/add")
@@ -69,6 +73,19 @@ public class PurchasedOrderSubmittedController {
 				}
 				return response;	
 	   }
+
+	@GetMapping("view/total")
+	@Operation(summary = "View total amount of submitted orders")
+	public double showTotal() throws InventoryException {
+		List<PurchaseOrder> purchaseOrderList = purchaseRepository.showByStatus("submited");
+		double total = 0.0;
+
+		for (PurchaseOrder purchaseOrder : purchaseOrderList) {
+			total = total + purchaseOrder.getTotalAmount();
+		}
+
+		return total;
+	}
 /* ..............  Rejecting the Purchase Order in Submitted ........ */
 	   @DeleteMapping("/delete/{id}")
 	   @ResponseBody

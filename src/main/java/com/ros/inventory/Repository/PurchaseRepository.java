@@ -50,7 +50,5 @@ public interface PurchaseRepository extends JpaRepository<PurchaseOrder,UUID>
 	@Query(value="select * from purchase_order where purchase_order_status =:status and purchase_order_date >:date Order By purchase_order_status ASC limit 1",nativeQuery=true)
     PurchaseOrder getStartSessionDate(@Param("status") String status,@Param("date") LocalDate date);
 
-   
-
 
 }

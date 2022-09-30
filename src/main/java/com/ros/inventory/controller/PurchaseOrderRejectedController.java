@@ -1,5 +1,8 @@
 package com.ros.inventory.controller;
 
+import com.ros.inventory.Repository.PurchaseRepository;
+import com.ros.inventory.entities.PurchaseOrder;
+import io.swagger.v3.oas.annotations.Operation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -12,6 +15,8 @@ import org.springframework.web.bind.annotation.RestController;
 import com.ros.inventory.Exception.InventoryException;
 import com.ros.inventory.service.IPurchaseOrderRejectedManager;
 
+import java.util.List;
+
 
 @RestController
 @RequestMapping("/purchase/rejected")
@@ -19,6 +24,10 @@ import com.ros.inventory.service.IPurchaseOrderRejectedManager;
 public class PurchaseOrderRejectedController {
 	@Autowired
     private IPurchaseOrderRejectedManager poRejected;
+
+	@Autowired
+	private PurchaseRepository purchaseRepository;
+
 	@GetMapping("/view")
 	   @ResponseBody
 	   public ResponseEntity<?> show()
@@ -35,6 +44,19 @@ public class PurchaseOrderRejectedController {
 				}
 				return response;	
 	   }
+
+	@GetMapping("view/total")
+	@Operation(summary = "View total amount of submitted orders")
+	public double showTotal() throws InventoryException {
+		List<PurchaseOrder> purchaseOrderList = purchaseRepository.showByStatus("submited");
+		double total = 0.0;
+
+		for (PurchaseOrder purchaseOrder : purchaseOrderList) {
+			total = total + purchaseOrder.getTotalAmount();
+		}
+
+		return total;
+	}
 
 
 }
