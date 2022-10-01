@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
+import com.ros.inventory.controller.dto.purchaseOrderDto;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.stereotype.Service;
@@ -12,12 +13,9 @@ import com.ros.inventory.Exception.InventoryException;
 import com.ros.inventory.Repository.PurchaseRepository;
 //import com.ros.inventory.controller.dto.ApprovalStatus;
 import com.ros.inventory.controller.dto.DraftsDto;
-import com.ros.inventory.controller.dto.SupplierDto;
 import com.ros.inventory.entities.OrderStatus;
 import com.ros.inventory.entities.PurchaseOrder;
-import com.ros.inventory.entities.Supplier;
 import com.ros.inventory.mapper.PurchaseOrderMapper;
-import com.ros.inventory.service.IPurchaseOrderManager;
 import com.ros.inventory.service.IPurchasedOrderSubmittedManager;
 
 @Service
@@ -69,6 +67,21 @@ public class PurchasedOrderSubmittedManager implements IPurchasedOrderSubmittedM
 			
 			return draftDto;
 		}
+
+		@Override
+	public double submittedTotal() {
+
+		List<PurchaseOrder>purchaseFromDB=purchaseRepo.showByStatus("submitted");
+
+		double total =0;
+
+		List<DraftsDto> draftDto = new ArrayList<DraftsDto>();
+		for (PurchaseOrder p : purchaseFromDB) {
+			total = total + p.getTotalAmount();
+		}
+
+		return total;
+	}
 	 	@Override
 	public PurchaseOrder delete(UUID id) throws InventoryException {
 		// TODO Auto-generated method stub

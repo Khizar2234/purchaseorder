@@ -1,8 +1,13 @@
 package com.ros.inventory.serviceImpl;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
+import com.ros.inventory.Repository.SupplierRepository;
+import com.ros.inventory.entities.OrderStatus;
+import com.ros.inventory.entities.TransferType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -11,19 +16,15 @@ import com.ros.inventory.Repository.ProductRepository;
 import com.ros.inventory.Repository.PurchaseRepository;
 import com.ros.inventory.controller.dto.ApproveViewDto;
 import com.ros.inventory.controller.dto.DeliveryDto;
-import com.ros.inventory.controller.dto.DraftsDto;
 import com.ros.inventory.controller.dto.InvoicePDto;
 import com.ros.inventory.controller.dto.ProductPDto;
-import com.ros.inventory.controller.dto.RejectedDto;
 import com.ros.inventory.controller.dto.SiTeTransfersDto;
 import com.ros.inventory.entities.Product;
 import com.ros.inventory.entities.PurchaseOrder;
-import com.ros.inventory.mapper.ApprovedMapper;
 import com.ros.inventory.mapper.ApprovedViewMapper;
 import com.ros.inventory.mapper.DeliverMapper;
 import com.ros.inventory.mapper.InvoicePMapper;
 import com.ros.inventory.mapper.ProductPMapper;
-import com.ros.inventory.mapper.PurchaseOrderMapper;
 import com.ros.inventory.mapper.SiteTransfersPurchaseMapper;
 import com.ros.inventory.service.IPurchaseOrderSiteTransferManager;
 
@@ -31,14 +32,20 @@ import com.ros.inventory.service.IPurchaseOrderSiteTransferManager;
 public class PurchaseOrderSiteTransferManager implements IPurchaseOrderSiteTransferManager {
 
 	@Autowired
-	private PurchaseRepository purchaseRepo;
+	private PurchaseRepository purchaseRepository;
+
+	@Autowired
+	private SupplierRepository supplierRepository;
+
 	@Autowired
 	private SiteTransfersPurchaseMapper purchaseMapper;
 
 	@Autowired
 	private ApprovedViewMapper apMapper;
+
 	@Autowired
 	private ProductRepository productRepo;
+
 	@Autowired
 	private ProductPMapper productpmapper;
 
@@ -51,7 +58,7 @@ public class PurchaseOrderSiteTransferManager implements IPurchaseOrderSiteTrans
 	@Override
 	public List<SiTeTransfersDto> showByStatus() throws InventoryException {
 		// TODO Auto-generated method stub
-		List<PurchaseOrder> purchaseFromDB = purchaseRepo.showByStatus("exported");
+		List<PurchaseOrder> purchaseFromDB = purchaseRepository.showByStatus("exported");
 
 		if (purchaseFromDB == null || purchaseFromDB.size() == 0) {
 			throw new InventoryException(" No Site Transfer Is Present");
@@ -68,7 +75,7 @@ public class PurchaseOrderSiteTransferManager implements IPurchaseOrderSiteTrans
 
 	@Override
 	public List<ApproveViewDto> showApprove() throws InventoryException {
-		List<PurchaseOrder> purchaseFromDB = purchaseRepo.getAll();
+		List<PurchaseOrder> purchaseFromDB = purchaseRepository.getAll();
 
 		if (purchaseFromDB == null || purchaseFromDB.size() == 0) {
 			throw new InventoryException(" No PurchaseOrder Is Present");
@@ -141,6 +148,86 @@ public class PurchaseOrderSiteTransferManager implements IPurchaseOrderSiteTrans
 		}
 
 		return invoiceDto;
+	}
+
+	private double getTotalTransferIn(List<PurchaseOrder> purchaseOrderList) {
+		double total = 0;
+		for (PurchaseOrder purchaseOrder : purchaseOrderList) {
+			if (purchaseOrder.getTransferType().equals(TransferType.TransferIn)) {
+				total = total + purchaseOrder.getTotalAmount();
+			}
+		}
+		return total;
+	}
+
+	private double getTotalTransferOut(List<PurchaseOrder> purchaseOrderList) {
+		double total = 0;
+		for (PurchaseOrder purchaseOrder : purchaseOrderList) {
+			if (purchaseOrder.getTransferType().equals(TransferType.TransferOut)) {
+				total = total + purchaseOrder.getTotalAmount();
+			}
+		}
+		return total;
+	}
+
+	/*@Override
+	public List<SiTeTransfersDto> showDetails() {
+
+		List<PurchaseOrder> purchaseOrderList = purchaseRepository.getAllByPurchaseOrderStatus(OrderStatus.exported);
+		HashMap<String, HashMap<String, Double>> dataMap = new HashMap<>();
+		List<SiTeTransfersDto> siTeTransfersDtoList = new ArrayList<>();
+
+		for (PurchaseOrder purchaseOrder : purchaseOrderList) {
+			if (!dataMap.containsKey(purchaseOrder.getSupplier().getSupplierBasic().getSupplierBusinessName())) {
+				if (purchaseOrder.getTransferType().equals(TransferType.TransferIn)) {
+					HashMap<String, Double> map = new HashMap<>();
+					map.put(String.valueOf(TransferType.TransferIn), getTotalTransferIn(purchaseOrderList));
+					dataMap.put(purchaseOrder.getSupplier().getSupplierBasic().getSupplierBusinessName(), map);
+				}
+				if (purchaseOrder.getTransferType().equals(TransferType.TransferOut)) {
+					HashMap<String, Double> map = new HashMap<>();
+					map.put(String.valueOf(TransferType.TransferOut), getTotalTransferOut(purchaseOrderList));
+					dataMap.put(purchaseOrder.getSupplier().getSupplierBasic().getSupplierBusinessName(), map);
+				}
+			}
+		}
+
+		for (String key : dataMap.keySet()) {
+			SiTeTransfersDto siTeTransfersDto = new SiTeTransfersDto();
+
+			siTeTransfersDto.setDate(String.valueOf(LocalDate.now()));
+			siTeTransfersDto.setSupplierName(key);
+			for (String subKey : dataMap.get(key).keySet()) {
+				siTeTransfersDto.setTransferType(TransferType.valueOf(subKey));
+				siTeTransfersDto.setNoOfProducts(21);
+				siTeTransfersDto.setTotalValue(dataMap.get(key).get(subKey));
+
+				siTeTransfersDtoList.add(siTeTransfersDto);
+			}
+		}
+
+		return siTeTransfersDtoList;
+	}*/
+
+
+	@Override
+	public List<SiTeTransfersDto> showDetails() {
+		List<PurchaseOrder> purchaseOrderList = purchaseRepository.getAllByPurchaseOrderStatus(OrderStatus.exported);
+		List<SiTeTransfersDto> siTeTransfersDtoList = new ArrayList<>();
+
+		for (PurchaseOrder purchaseOrder : purchaseOrderList) {
+			SiTeTransfersDto siTeTransfersDto = new SiTeTransfersDto();
+
+			siTeTransfersDto.setDate(String.valueOf(purchaseOrder.getPurchaseOrderDate()));
+			siTeTransfersDto.setSupplierName(purchaseOrder.getSupplier().getSupplierBasic().getSupplierBusinessName());
+			siTeTransfersDto.setTransferType(purchaseOrder.getTransferType());
+			siTeTransfersDto.setTotalValue(purchaseOrder.getTotalAmount());
+			siTeTransfersDto.setNoOfProducts(purchaseOrder.getSupplier().getProducts().size());
+
+			siTeTransfersDtoList.add(siTeTransfersDto);
+		}
+
+		return siTeTransfersDtoList;
 	}
 
 }

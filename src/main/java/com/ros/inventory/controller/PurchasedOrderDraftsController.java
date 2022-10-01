@@ -1,8 +1,12 @@
 package com.ros.inventory.controller;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
+import com.ros.inventory.Repository.PurchaseRepository;
+import com.ros.inventory.Repository.SupplierRepository;
+import com.ros.inventory.entities.OrderStatus;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -27,11 +31,17 @@ import io.swagger.v3.oas.annotations.Operation;
 @RestController
 @RequestMapping("/purchase/drafts")
 @CrossOrigin("*")
-
 public class PurchasedOrderDraftsController
 {
 	@Autowired
 	private  IPurchaseOrderManager purchaseorder;
+
+	@Autowired
+	private PurchaseRepository purchaseRepository;
+
+	@Autowired
+	private SupplierRepository supplierRepository;
+
 /* .............. Saving the purchaseOrder in Drafts ........*/
 	@PostMapping("/add")
 	@ResponseBody
@@ -92,6 +102,19 @@ public class PurchasedOrderDraftsController
 				}
 				return response;	
 	   }
+
+	@GetMapping("view/total")
+	@Operation(summary = "View total amount of submitted orders")
+	public double showTotal() throws InventoryException {
+		List<PurchaseOrder> purchaseOrderList = purchaseRepository.showByStatus("drafts");
+		double total = 0.0;
+
+		for (PurchaseOrder purchaseOrder : purchaseOrderList) {
+			total = total + purchaseOrder.getTotalAmount();
+		}
+
+		return total;
+	}
 /*...............Deleting the data in Drafts............*/	
 	   @DeleteMapping("/delete/{id}")
 	   @ResponseBody
@@ -143,6 +166,33 @@ public class PurchasedOrderDraftsController
 
 		return response;
 	}
-	
+
+	//Drafts information
+	@GetMapping(value = "/getDrafts")
+	@Operation(summary = "info of all drafts")
+	public List<DraftsDto> getDrafts() {
+		List<PurchaseOrder> purchaseOrderList = new ArrayList<>();
+
+		List<DraftsDto> draftsDtoList = new ArrayList<>();
+
+		purchaseOrderList = purchaseRepository.getAllByPurchaseOrderStatus(OrderStatus.drafts);
+
+		for (PurchaseOrder order : purchaseOrderList) {
+			DraftsDto draft = new DraftsDto();
+
+			draft.setPurchasedNumber(order.getPurchasedId());
+			draft.setPurchaseDate(String.valueOf(order.getPurchaseOrderDate()));
+
+			Supplier supplier = supplierRepository.getBySupplierId(order.getSupplier().getSupplierId());
+
+			draft.setSupplierName(supplier.getSupplierBasic().getSupplierBusinessName());
+			draft.setSupplierType(String.valueOf(supplier.getSupplierType()));
+			draft.setValue(order.getTotalAmount());
+
+			draftsDtoList.add(draft);
+		}
+
+		return draftsDtoList;
+	}
 
 }
