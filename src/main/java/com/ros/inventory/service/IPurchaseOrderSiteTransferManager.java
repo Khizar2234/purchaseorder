@@ -21,5 +21,5 @@ public interface IPurchaseOrderSiteTransferManager {
 
 	List<InvoicePDto> showInvoice() throws InventoryException;
 
-	//List<SiTeTransfersDto> showDetails();
+	List<SiTeTransfersDto> showDetails();
 }
