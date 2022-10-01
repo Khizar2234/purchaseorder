@@ -6,9 +6,9 @@ spring:
   application:
     name: InventoryService
   datasource:
-    url: jdbc:postgresql://db:5432/inventory?CreateDatabaseIfNotExist=true
-    username: admin
-    password: secretp@sswoRd
+    url: jdbc:postgresql://inventory.postgres.database.azure.com:5432/Inventory-Purchaseorder?CreateDatabaseIfNotExist=true
+    username: adminroot
+    password: password@123
     initialization-mode: always
     driver-class-name: org.postgresql.Driver
   jpa:

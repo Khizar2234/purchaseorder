@@ -3,6 +3,7 @@ package com.ros.inventory.Repository;
 import java.util.List;
 import java.util.UUID;
 
+import com.ros.inventory.entities.Supplier;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -17,6 +18,12 @@ import com.ros.inventory.entities.PurchaseOrder;
 @Transactional
 public interface ProductRepository extends JpaRepository<Product,UUID>
 {
+  @Query(value="SELECT * FROM supplier s WHERE supplier_id=:supplier_id")
+  Supplier getSupplierDetails(@Param("supplier_id") UUID id);
+
+  @Query(value="SELECT * FROM supplier")
+  List<Supplier> getAllSuppliers();
+
   @Query(value="SELECT * FROM product p LEFT JOIN supplier s on p.supplier_id = s.supplier_id "
   		+ " WHERE s.supplier_id =:supplier_id",nativeQuery=true)
   List<Product> getAll(@Param("supplier_id") UUID id);

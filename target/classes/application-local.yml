@@ -1,5 +1,5 @@
 server:
-  port: 8092
+  port: 9090
   servlet:
     context-path: /inventory
 spring:
@@ -8,12 +8,12 @@ spring:
   datasource:
     url: jdbc:postgresql://localhost:5432/inventory
     username: postgres
-    password: postgres
+    password: admin
     initialization-mode: always
     driver-class-name: org.postgresql.Driver
   jpa:
     hibernate:
-      ddl-auto: create
+      ddl-auto: update
     properties:
       hibernate:
         dialect: org.hibernate.dialect.PostgreSQLDialect
@@ -23,7 +23,7 @@ spring:
       enabled: false
       
 swagger:
-  url: http://localhost:8092/inventory
+  url: http://localhost:9090/inventory
   
 eureka:
   client:
