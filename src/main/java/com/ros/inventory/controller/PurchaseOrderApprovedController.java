@@ -7,6 +7,7 @@ import com.ros.inventory.Repository.SupplierRepository;
 import com.ros.inventory.controller.dto.ApprovedDto;
 import com.ros.inventory.entities.OrderStatus;
 import com.ros.inventory.entities.Supplier;
+import com.ros.inventory.serviceImpl.PurchaseOrderApprovedManager;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -32,6 +33,8 @@ public class PurchaseOrderApprovedController {
 	private IPurchaseOrderApprovedManager poapproved;
 	@Autowired
 	private PurchaseRepository pRepo;
+	@Autowired
+	private PurchaseOrderApprovedManager purchaseOrderApprovedManager;
 
 	@Autowired
 	private SupplierRepository supplierRepository;
@@ -111,44 +114,16 @@ public class PurchaseOrderApprovedController {
 	@GetMapping("view/total")
 	@Operation(summary = "View total amount of approved orders")
 	public double showTotal() throws InventoryException {
-		List<PurchaseOrder> purchaseOrderList = pRepo.showByStatus("approved");
-		double total = 0.0;
-
-		for (PurchaseOrder purchaseOrder : purchaseOrderList) {
-			total = total + purchaseOrder.getTotalAmount();
-		}
-
-		return total;
+		return purchaseOrderApprovedManager.approvedTotal();
 	}
 
 
 	//Drafts information
-	@GetMapping(value = "/getApproved")
+	/*@GetMapping(value = "/getApproved")
 	@Operation(summary = "info of all drafts")
 	public List<ApprovedDto> getApproved() {
-		List<PurchaseOrder> purchaseOrderList = new ArrayList<>();
-
-		List<ApprovedDto> approvedDtoList = new ArrayList<>();
-
-		purchaseOrderList = pRepo.getAllByPurchaseOrderStatus(OrderStatus.approved);
-
-		for (PurchaseOrder order : purchaseOrderList) {
-			ApprovedDto approved = new ApprovedDto();
-
-			approved.setPurchasedNumber(order.getPurchasedId());
-			approved.setPurchaseDate(String.valueOf(order.getPurchaseOrderDate()));
-
-			Supplier supplier = supplierRepository.getBySupplierId(order.getSupplier().getSupplierId());
-
-			approved.setSupplierName(supplier.getSupplierBasic().getSupplierBusinessName());
-			approved.setSupplierType(String.valueOf(supplier.getSupplierType()));
-			approved.setValue(order.getTotalAmount());
-			approved.setStatus(order.getPurchaseOrderStatus());
-
-			approvedDtoList.add(approved);
-		}
-
-		return approvedDtoList;
+		return purchaseOrderApprovedManager.getApproved();
 	}
 
+	 */
 }

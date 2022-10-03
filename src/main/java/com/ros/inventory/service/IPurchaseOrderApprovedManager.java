@@ -34,9 +34,10 @@ public interface IPurchaseOrderApprovedManager {
 
 	String setExported() throws InventoryException;
 	
-	//List<AttachmentsDto>showAttachments()throws InventoryException;
+	List<AttachmentsDto>showAttachments()throws InventoryException;
 
-	
-	
+	double approvedTotal();
+
+	List<ApprovedDto> getApproved();
 
 }

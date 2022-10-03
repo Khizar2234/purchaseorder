@@ -10,4 +10,8 @@ import com.ros.inventory.controller.dto.SiTeTransfersDto;
 
 public interface IPurchaseOrderRejectedManager {
 	List<RejectedDto>showByStatus() throws InventoryException;
+
+	double rejectedTotal();
+
+	List<RejectedDto> getRejected();
 }

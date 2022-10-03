@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import com.ros.inventory.Repository.SupplierRepository;
+import com.ros.inventory.entities.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -19,10 +21,6 @@ import com.ros.inventory.controller.dto.InvoicePDto;
 import com.ros.inventory.controller.dto.ProductDto;
 import com.ros.inventory.controller.dto.ProductPDto;
 import com.ros.inventory.controller.dto.RejectedDto;
-import com.ros.inventory.entities.Attachments;
-import com.ros.inventory.entities.OrderStatus;
-import com.ros.inventory.entities.Product;
-import com.ros.inventory.entities.PurchaseOrder;
 import com.ros.inventory.mapper.ApprovedMapper;
 import com.ros.inventory.mapper.ApprovedViewMapper;
 import com.ros.inventory.mapper.AttachmentsMapper;
@@ -45,7 +43,9 @@ public class PurchaseOrderApprovedManager implements IPurchaseOrderApprovedManag
 	    private ProductRepository productRepo;
 	    @Autowired
 	    private ProductPMapper productpmapper;
-	    
+
+		@Autowired
+		private SupplierRepository supplierRepository;
 	    @Autowired
 	    private DeliverMapper dmapper;
 	    
@@ -173,27 +173,64 @@ public class PurchaseOrderApprovedManager implements IPurchaseOrderApprovedManag
 			return "Exported";
 		}
 
+		@Override
+		public double approvedTotal() {
+			List<PurchaseOrder> purchaseOrderList = purchaseRepo.showByStatus("approved");
+			double total = 0.0;
 
+			for (PurchaseOrder purchaseOrder : purchaseOrderList) {
+				total = total + purchaseOrder.getTotalAmount();
+			}
+
+			return total;
+		}
+
+		@Override
+		public List<ApprovedDto> getApproved() {
+			List<PurchaseOrder> purchaseOrderList = new ArrayList<>();
+
+			List<ApprovedDto> approvedDtoList = new ArrayList<>();
+
+			purchaseOrderList = purchaseRepo.getAllByPurchaseOrderStatus(OrderStatus.approved);
+
+			for (PurchaseOrder order : purchaseOrderList) {
+				ApprovedDto approved = new ApprovedDto();
+
+				approved.setPurchasedNumber(order.getPurchasedId());
+				approved.setPurchaseDate(String.valueOf(order.getPurchaseOrderDate()));
+
+				Supplier supplier = supplierRepository.getBySupplierId(order.getSupplier().getSupplierId());
+
+				approved.setSupplierName(supplier.getSupplierBasic().getSupplierBusinessName());
+				approved.setSupplierType(String.valueOf(supplier.getSupplierType()));
+				approved.setValue(order.getTotalAmount());
+				approved.setStatus(order.getPurchaseOrderStatus());
+
+				approvedDtoList.add(approved);
+			}
+
+			return approvedDtoList;
+		}
 
 		
 /*.....................Showing Attachments....................................*/
 		
-//		@Override
-//		public List<AttachmentsDto> showAttachments() throws InventoryException {
-//			// TODO Auto-generated method stub
-//			List<Attachments> attachmentFromDB=purchaseRepo.getAllAttachments();
-//			if (attachmentFromDB == null || attachmentFromDB.size() == 0) {
-//				throw new InventoryException(" No PurchaseOrder Is Present");
-//			}
-//			List<AttachmentsDto> attachmentDto = new ArrayList<AttachmentsDto>();
-//			for (Attachments a : attachmentFromDB) {
-//				AttachmentsDto ad = aMapper.convertToAttachmentsDto(a);
-//				attachmentDto.add(ad);
-//			}
-//
-//			return attachmentDto;
-//		}
-//		
+	@Override
+		public List<AttachmentsDto> showAttachments() throws InventoryException {
+			// TODO Auto-generated method stub
+			List<Attachments> attachmentFromDB=purchaseRepo.getAllAttachments();
+			if (attachmentFromDB == null || attachmentFromDB.size() == 0) {
+				throw new InventoryException(" No PurchaseOrder Is Present");
+			}
+			List<AttachmentsDto> attachmentDto = new ArrayList<AttachmentsDto>();
+			for (Attachments a : attachmentFromDB) {
+				AttachmentsDto ad = aMapper.convertToAttachmentsDto(a);
+				attachmentDto.add(ad);
+			}
+
+			return attachmentDto;
+		}
+
 		
 
 		

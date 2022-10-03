@@ -39,7 +39,7 @@ public class PurchaseOrderSiteTransferController {
 
 	@GetMapping(value = "/getSiteTransfer")
 	@Operation(summary = "info of all Site transfers")
-	public List<SiTeTransfersDto> getSubmitted(String supplierName) {
+	public List<SiTeTransfersDto> getSubmitted() {
 		return sitetransfer.showDetails();
 	}
 

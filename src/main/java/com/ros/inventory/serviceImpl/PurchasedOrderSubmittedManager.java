@@ -1,10 +1,14 @@
 package com.ros.inventory.serviceImpl;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
+import com.google.gson.Gson;
+import com.ros.inventory.Repository.SupplierRepository;
 import com.ros.inventory.controller.dto.purchaseOrderDto;
+import com.ros.inventory.entities.Supplier;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.stereotype.Service;
@@ -17,14 +21,20 @@ import com.ros.inventory.entities.OrderStatus;
 import com.ros.inventory.entities.PurchaseOrder;
 import com.ros.inventory.mapper.PurchaseOrderMapper;
 import com.ros.inventory.service.IPurchasedOrderSubmittedManager;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 
 @Service
 public class PurchasedOrderSubmittedManager implements IPurchasedOrderSubmittedManager
 {
     @Autowired
 	private PurchaseRepository purchaseRepo;
+
     @Autowired
     private PurchaseOrderMapper purchaseMapper;
+
+	@Autowired
+	private SupplierRepository supplierRepository;
 	
 	@Override
 	public PurchaseOrder save(PurchaseOrder purchase) throws InventoryException 
@@ -69,7 +79,7 @@ public class PurchasedOrderSubmittedManager implements IPurchasedOrderSubmittedM
 		}
 
 		@Override
-	public double submittedTotal() {
+		public double submittedTotal() {
 
 		List<PurchaseOrder>purchaseFromDB=purchaseRepo.showByStatus("submitted");
 
@@ -154,10 +164,31 @@ public class PurchasedOrderSubmittedManager implements IPurchasedOrderSubmittedM
 		return "Rejected";
 
 	}
-	
 
+	@Override
+	public List<DraftsDto> getSubmitted() {
+		List<PurchaseOrder> purchaseOrderList = new ArrayList<>();
 
+		List<DraftsDto> draftsDtoList = new ArrayList<>();
 
-	
+		purchaseOrderList = purchaseRepo.getAllByPurchaseOrderStatus(OrderStatus.submited);
+
+		for (PurchaseOrder order : purchaseOrderList) {
+			DraftsDto draft = new DraftsDto();
+
+			draft.setPurchasedNumber(order.getPurchasedId());
+			draft.setPurchaseDate(String.valueOf(order.getPurchaseOrderDate()));
+
+			Supplier supplier = supplierRepository.getBySupplierId(order.getSupplier().getSupplierId());
+
+			draft.setSupplierName(supplier.getSupplierBasic().getSupplierBusinessName());
+			draft.setSupplierType(String.valueOf(supplier.getSupplierType()));
+			draft.setValue(order.getTotalAmount());
+
+			draftsDtoList.add(draft);
+		}
+
+		return draftsDtoList;
+	}
 
 }

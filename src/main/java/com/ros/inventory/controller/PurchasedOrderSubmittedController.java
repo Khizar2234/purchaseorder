@@ -1,13 +1,16 @@
 package com.ros.inventory.controller;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
+import com.google.gson.Gson;
 import com.ros.inventory.Repository.PurchaseRepository;
 import com.ros.inventory.Repository.SupplierRepository;
 import com.ros.inventory.entities.OrderStatus;
 import com.ros.inventory.entities.Supplier;
+import com.ros.inventory.serviceImpl.PurchasedOrderSubmittedManager;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -41,7 +44,7 @@ public class PurchasedOrderSubmittedController {
 	private PurchaseRepository purchaseRepository;
 
 	@Autowired
-	private SupplierRepository supplierRepository;
+	private PurchasedOrderSubmittedManager purchasedOrderSubmittedManager;
 	
 	/*.............Saving Purchase Order in Submitted section........*/
 	@PostMapping("/add")
@@ -83,43 +86,17 @@ public class PurchasedOrderSubmittedController {
 	@GetMapping("view/total")
 	@Operation(summary = "View total amount of submitted orders")
 	public double showTotal() throws InventoryException {
-		List<PurchaseOrder> purchaseOrderList = purchaseRepository.showByStatus("submited");
-		double total = 0.0;
-
-		for (PurchaseOrder purchaseOrder : purchaseOrderList) {
-			total = total + purchaseOrder.getTotalAmount();
-		}
-
-		return total;
+		return purchasedOrderSubmittedManager.submittedTotal();
 	}
 
 	//Drafts information
-	@GetMapping(value = "/getSubmitted")
+	/*@GetMapping(value = "/getSubmitted")
 	@Operation(summary = "info of all submitted POs")
 	public List<DraftsDto> getSubmitted() {
-		List<PurchaseOrder> purchaseOrderList = new ArrayList<>();
-
-		List<DraftsDto> draftsDtoList = new ArrayList<>();
-
-		purchaseOrderList = purchaseRepository.getAllByPurchaseOrderStatus(OrderStatus.submited);
-
-		for (PurchaseOrder order : purchaseOrderList) {
-			DraftsDto draft = new DraftsDto();
-
-			draft.setPurchasedNumber(order.getPurchasedId());
-			draft.setPurchaseDate(String.valueOf(order.getPurchaseOrderDate()));
-
-			Supplier supplier = supplierRepository.getBySupplierId(order.getSupplier().getSupplierId());
-
-			draft.setSupplierName(supplier.getSupplierBasic().getSupplierBusinessName());
-			draft.setSupplierType(String.valueOf(supplier.getSupplierType()));
-			draft.setValue(order.getTotalAmount());
-
-			draftsDtoList.add(draft);
-		}
-
-		return draftsDtoList;
+		return purchaseorderSubmitted.getSubmitted();
 	}
+
+	 */
 
 /* ..............  Rejecting the Purchase Order in Submitted ........ */
 	   @DeleteMapping("/delete/{id}")

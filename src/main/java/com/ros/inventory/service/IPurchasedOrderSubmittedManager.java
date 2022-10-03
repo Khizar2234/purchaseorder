@@ -17,6 +17,8 @@ public interface IPurchasedOrderSubmittedManager {
 
 	double submittedTotal();
 
+	List<DraftsDto> getSubmitted();
+
 	PurchaseOrder delete(UUID number)throws InventoryException;
 	
 	String approveSinglePurchaseOrder(UUID purchasedId) throws InventoryException;
