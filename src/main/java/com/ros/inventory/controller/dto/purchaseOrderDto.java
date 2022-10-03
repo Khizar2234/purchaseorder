@@ -23,5 +23,4 @@ public class purchaseOrderDto {
 	private OrderStatus purchaseOrderStatus;
 	private String invoice_status;
 	private String supplierBusinessName;
-	private String supplierType;
 }

@@ -15,6 +15,6 @@ public interface RejectedProductMapper {
 	@Mapping(source = "supplier.supplierType", target = "supplierType")
 	@Mapping(source="purchase.purchasedId",target="purchasedNumber")
 	@Mapping(source="purchase.purchaseOrderDate",target="purchaseDate")
-	@Mapping(source="purchase.purchaseRejectedDate",target="RejectionDate")
+	@Mapping(source="purchase.purchaseRejectedDate",target="rejectionDate")
 	RejectedDto convertToRejectedDto(PurchaseOrder purchase);
 }

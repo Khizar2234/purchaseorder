@@ -2,10 +2,19 @@ package com.ros.inventory.entities;
 
 import java.io.Serializable;
 import java.time.LocalDate;
-import java.util.List;
 import java.util.UUID;
 
-import javax.persistence.*;
+import javax.persistence.CascadeType;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
+import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.OneToOne;
 
 import org.hibernate.annotations.Type;
 
@@ -32,10 +41,6 @@ public class PurchaseOrder implements Serializable
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	@Column(name ="purchase_id", length = 8)
 	private UUID purchasedId;
-
-	/*@GeneratedValue(strategy = GenerationType.AUTO)
-	@Column(name = "purchase_number")
-	private long purchaseNumber;*/
 	
 	@Column(name ="purchase_order_date")
 	private LocalDate purchaseOrderDate;
@@ -53,7 +58,7 @@ public class PurchaseOrder implements Serializable
 	
 	@Column(name ="purchaseRejection_Date")
 	private LocalDate purchaseRejectedDate;
-
+	
 	@OneToOne(fetch = FetchType.LAZY ,cascade=CascadeType.ALL)
 	@JoinColumn(name ="supplier_id")
 	private Supplier  supplier;

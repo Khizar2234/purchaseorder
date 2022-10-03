@@ -16,7 +16,7 @@ public class RejectedDto {
 	private UUID purchasedNumber;		
 	private String purchaseDate;
 	private double value;
-	private LocalDate RejectionDate;
+	private LocalDate rejectionDate;
 	private String supplierName;
 	private String supplierType;
 

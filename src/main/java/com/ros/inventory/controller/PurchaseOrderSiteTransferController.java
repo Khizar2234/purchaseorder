@@ -1,10 +1,5 @@
 package com.ros.inventory.controller;
 
-import com.ros.inventory.Repository.SupplierRepository;
-import com.ros.inventory.controller.dto.SiTeTransfersDto;
-import com.ros.inventory.entities.OrderStatus;
-import com.ros.inventory.entities.PurchaseOrder;
-import com.ros.inventory.entities.Supplier;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -20,9 +15,6 @@ import com.ros.inventory.service.IPurchaseOrderSiteTransferManager;
 
 import io.swagger.v3.oas.annotations.Operation;
 
-import java.util.ArrayList;
-import java.util.List;
-
 
 @RestController
 @RequestMapping("/purchase/sitetransfer")
@@ -30,18 +22,8 @@ import java.util.List;
 public class PurchaseOrderSiteTransferController {
 	@Autowired
 	private IPurchaseOrderSiteTransferManager sitetransfer;
-
 	@Autowired
-	private PurchaseRepository purchaseRepository;
-
-	@Autowired
-	private SupplierRepository supplierRepository;
-
-	@GetMapping(value = "/getSiteTransfer")
-	@Operation(summary = "info of all Site transfers")
-	public List<SiTeTransfersDto> getSubmitted(String supplierName) {
-		return sitetransfer.showDetails();
-	}
+	private PurchaseRepository pRepo;
 
 	  /*Showing the Details which are present in SiteTransfer Section */	
 	   @GetMapping("/view")

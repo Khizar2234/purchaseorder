@@ -68,6 +68,7 @@ public class InventoryServiceOrderProcessingApplication {
 	public static void main(String[] args) {
 
 		SpringApplication.run(InventoryServiceOrderProcessingApplication.class, args);
+
 	}
 	
 	@Value(value = "${swagger.url}")

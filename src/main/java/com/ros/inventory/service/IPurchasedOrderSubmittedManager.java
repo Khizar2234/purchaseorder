@@ -5,17 +5,14 @@ import java.util.UUID;
 
 import com.ros.inventory.Exception.InventoryException;
 import com.ros.inventory.controller.dto.DraftsDto;
-import com.ros.inventory.controller.dto.purchaseOrderDto;
 import com.ros.inventory.entities.PurchaseOrder;
 
 public interface IPurchasedOrderSubmittedManager {
-	public PurchaseOrder save(PurchaseOrder purchase)throws InventoryException;
+	PurchaseOrder save(PurchaseOrder purchase)throws InventoryException;
 	
 	PurchaseOrder updatePurchase(PurchaseOrder purchase)throws InventoryException;
 	
 	List<DraftsDto> showByStatus()throws InventoryException;
-
-	double submittedTotal();
 
 	PurchaseOrder delete(UUID number)throws InventoryException;
 	

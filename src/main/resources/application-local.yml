@@ -6,14 +6,14 @@ spring:
   application:
     name: InventoryService
   datasource:
-    url: jdbc:postgresql://localhost:5432/inventory
+    url: jdbc:postgresql://localhost:5432/inventory?CreateDatabaseIfNotExist=true
     username: postgres
-    password: Database@001
+    password: 03022000
     initialization-mode: always
     driver-class-name: org.postgresql.Driver
   jpa:
     hibernate:
-      ddl-auto: update
+      ddl-auto: create
     properties:
       hibernate:
         dialect: org.hibernate.dialect.PostgreSQLDialect
@@ -21,14 +21,16 @@ spring:
   cloud:
     discovery:
       enabled: false
+    compatibility-verifier:
+      enabled: false
       
 swagger:
   url: http://localhost:8092/inventory
   
 eureka:
   client:
-    register-with-eureka: true
-    fetch-registry: true
+    register-with-eureka: false
+    fetch-registry: false
     service-url:
       defaultZone: https://service-registry.test.restaurantonesolution.com/eureka
   instance:
