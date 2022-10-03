@@ -3,6 +3,7 @@ package com.ros.inventory.service;
 import java.util.List;
 import java.util.UUID;
 
+import com.ros.inventory.entities.Product;
 import org.springframework.util.MultiValueMap;
 
 import com.ros.inventory.Exception.InventoryException;
@@ -40,5 +41,7 @@ public interface IPurchaseOrderApprovedManager {
 	double approvedTotal();
 
 	List<ApprovedDto> getApproved();
+
+	Product setProductPrice(Product product);
 
 }

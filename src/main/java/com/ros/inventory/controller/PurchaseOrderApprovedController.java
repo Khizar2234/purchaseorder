@@ -7,6 +7,7 @@ import java.util.UUID;
 import com.ros.inventory.Repository.SupplierRepository;
 import com.ros.inventory.controller.dto.ApprovedDto;
 import com.ros.inventory.entities.OrderStatus;
+import com.ros.inventory.entities.Product;
 import com.ros.inventory.entities.Supplier;
 import com.ros.inventory.serviceImpl.PurchaseOrderApprovedManager;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -128,6 +129,14 @@ public class PurchaseOrderApprovedController {
 	@Operation(summary = "View total amount of approved orders")
 	public double showTotal() throws InventoryException {
 		return purchaseOrderApprovedManager.approvedTotal();
+	}
+
+	@PutMapping("/product")
+	@ResponseBody
+	public ResponseEntity<?> setProductPrice(@RequestBody Product product) {
+		ResponseEntity response;
+		response = new ResponseEntity(poapproved.setProductPrice(product), HttpStatus.OK);
+		return response;
 	}
 
 

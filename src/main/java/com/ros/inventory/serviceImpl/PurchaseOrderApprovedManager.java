@@ -234,12 +234,10 @@ public class PurchaseOrderApprovedManager implements IPurchaseOrderApprovedManag
 			return attachmentDto;
 		}
 
-		
-
-		
-		
-		
-		
-		
+		@Override
+		public Product setProductPrice(Product product) {
+			productRepo.save(product);
+			return product;
+		}
 
 }
