@@ -11,16 +11,7 @@ import com.ros.inventory.serviceImpl.PurchaseOrderDraftsManager;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import com.ros.inventory.Exception.InventoryException;
 import com.ros.inventory.controller.dto.DraftsDto;
@@ -161,6 +152,22 @@ public class PurchasedOrderDraftsController
 		response = new ResponseEntity<Object>(purchaseorder.bulkSubmit(bulksubmit), HttpStatus.OK);
 
 		return response;
+	}
+
+	@GetMapping
+	@ResponseBody
+	@Operation(summary = "Get specific purchase order by id")
+	public DraftsDto get(@RequestParam("id") String id) {
+		DraftsDto draft = new DraftsDto();
+		System.out.println(id);
+		PurchaseOrder purchaseOrder = purchaseRepository.getById(UUID.fromString(id));
+		draft.setPurchasedNumber(purchaseOrder.getPurchasedId());
+		draft.setPurchaseDate(String.valueOf(purchaseOrder.getPurchaseOrderDate()));
+		Supplier supplier = supplierRepository.getBySupplierId(purchaseOrder.getSupplier().getSupplierId());
+		draft.setSupplierName(supplier.getSupplierBasic().getSupplierBusinessName());
+		draft.setSupplierType(String.valueOf(supplier.getSupplierType()));
+		draft.setValue(purchaseOrder.getTotalAmount());
+		return draft;
 	}
 
 	//Drafts information

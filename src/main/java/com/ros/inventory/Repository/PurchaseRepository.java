@@ -53,4 +53,11 @@ public interface PurchaseRepository extends JpaRepository<PurchaseOrder,UUID>
 
 	List<PurchaseOrder> getAllByPurchaseOrderStatus(OrderStatus status);
 
+	@Query(value="select * from purchase_order p join supplier s on p.supplier_id = s.supplier_id where supplier_type = :supplier_type",nativeQuery=true)
+	List<PurchaseOrder> getAllBySupplierType(@Param("supplier_type") String supplierType);
+
+	//Return attachments details
+	@Query(value="select * from attachments ",nativeQuery=true)
+	List<Attachments> getAllAttachments(@Param("purchase_id") UUID purchaseID);
+
 }
