@@ -19,4 +19,5 @@ public class DeliveryDto {
 	private double finalPrice;
 	private int productCode;
 	private String productName;
+	private double productPrice;
 }

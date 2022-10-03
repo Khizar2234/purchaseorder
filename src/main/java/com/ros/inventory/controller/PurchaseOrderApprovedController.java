@@ -2,6 +2,7 @@ package com.ros.inventory.controller;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 import com.ros.inventory.Repository.SupplierRepository;
 import com.ros.inventory.controller.dto.ApprovedDto;
@@ -11,12 +12,7 @@ import com.ros.inventory.serviceImpl.PurchaseOrderApprovedManager;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import com.ros.inventory.Exception.InventoryException;
 import com.ros.inventory.Repository.PurchaseRepository;
@@ -53,49 +49,71 @@ public class PurchaseOrderApprovedController {
 		return response;
 	}
 
-	/* ...............Showing the Product Details.................. */
-	@GetMapping("/PurchaseOrder")
+	@GetMapping("/PurchaseOrder/{purchasedId}")
 	@ResponseBody
 	@Operation(summary = "Showing the Product Items in the PurchaseOrder ApproveSection ")
-	public ResponseEntity<?> showproduct() {
+	public ResponseEntity<?> showproduct(@PathVariable("purchasedId") UUID purchasedId) {
+
 		ResponseEntity response;
 		try {
-			response = new ResponseEntity(poapproved.showProduct(), HttpStatus.OK);
+			response = new ResponseEntity(poapproved.showProduct(purchasedId), HttpStatus.OK);
 		} catch (InventoryException e) {
 			response = new ResponseEntity(e.getMessage(), HttpStatus.OK);
 			e.printStackTrace();
 		}
 		return response;
-	}
 
+	}
 	/* ..............Showing Delivery Details............. */
-	@GetMapping("/Delivery")
+	@GetMapping("/Delivery/{purchasedId}")
 	@ResponseBody
 	@Operation(summary = "Showing the Deleiver Details in the PurchaseOder ApproveSection")
-	public ResponseEntity<?> showDelivery() {
+	public ResponseEntity<?> showDelivery(@PathVariable("purchasedId") UUID purchasedId) {
 		ResponseEntity response;
+
 		try {
-			response = new ResponseEntity(poapproved.showDelivery(), HttpStatus.OK);
+
+			response = new ResponseEntity(poapproved.showDelivery(purchasedId), HttpStatus.OK);
+
 		} catch (InventoryException e) {
+
 			response = new ResponseEntity(e.getMessage(), HttpStatus.OK);
+
 			e.printStackTrace();
+
 		}
+
 		return response;
+
 	}
 
+
+
 	/* ..............Showing Invoice Details............. */
-	@GetMapping("/Invoice")
+	@GetMapping("/Invoice/{purchasedId}")
+
 	@ResponseBody
+
 	@Operation(summary = "Showing the Invoice Details in the PurchaseOrder ApproveSection ")
-	public ResponseEntity<?> showInvoice() {
+
+	public ResponseEntity<?> showInvoice(@PathVariable("purchasedId") UUID purchasedId) {
+
 		ResponseEntity response;
+
 		try {
-			response = new ResponseEntity(poapproved.showInvoice(), HttpStatus.OK);
+
+			response = new ResponseEntity(poapproved.showInvoice(purchasedId), HttpStatus.OK);
+
 		} catch (InventoryException e) {
+
 			response = new ResponseEntity(e.getMessage(), HttpStatus.OK);
+
 			e.printStackTrace();
+
 		}
+
 		return response;
+
 	}
 
 	@PutMapping("/mark_exported")

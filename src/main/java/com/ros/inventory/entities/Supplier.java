@@ -32,6 +32,9 @@ public class Supplier implements Serializable {
 	@Enumerated(EnumType.STRING)
 	private SupplierType supplierType;
 
+	@Column(name = "supplier_name")
+	private String supplierName;
+
 	@Column(name = "restaurant_name")
 	private String restaurantName;
 
