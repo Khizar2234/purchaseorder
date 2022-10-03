@@ -56,9 +56,6 @@ public class PurchasedOrderSubmittedManager implements IPurchasedOrderSubmittedM
 	}
 	
 
-
-	
-
 	/*..........Saving as a Draft....................*/
 	 @Override
 		public List<DraftsDto> showByStatus() throws InventoryException {
@@ -81,7 +78,7 @@ public class PurchasedOrderSubmittedManager implements IPurchasedOrderSubmittedM
 		@Override
 		public double submittedTotal() {
 
-		List<PurchaseOrder>purchaseFromDB=purchaseRepo.showByStatus("submitted");
+		List<PurchaseOrder>purchaseFromDB=purchaseRepo.showByStatus("submited");
 
 		double total =0;
 

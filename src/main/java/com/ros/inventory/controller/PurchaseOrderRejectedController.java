@@ -48,16 +48,8 @@ public class PurchaseOrderRejectedController {
 	   public ResponseEntity<?> show()
 	   {
 		   ResponseEntity response;
-			   try
-	   			{
-				   response = new ResponseEntity(poRejected.showByStatus(),HttpStatus.OK);
-	   			}
-			   catch (InventoryException e)
-				{
-					response = new ResponseEntity(e.getMessage(), HttpStatus.OK);
-					e.printStackTrace();
-				}
-				return response;	
+		   response = new ResponseEntity(poRejected.getRejected(),HttpStatus.OK);
+		   return response;
 	   }
 
 	@GetMapping("view/total")

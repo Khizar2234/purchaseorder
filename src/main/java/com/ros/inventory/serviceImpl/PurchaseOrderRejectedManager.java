@@ -44,8 +44,8 @@ public class PurchaseOrderRejectedManager implements IPurchaseOrderRejectedManag
 			
 			List<RejectedDto> rejectDto = new ArrayList<RejectedDto>();
 			for (PurchaseOrder p : purchaseFromDB) {
-				RejectedDto pd = purchaseMapper.convertToRejectedDto(p);
-				rejectDto.add(pd);
+				//RejectedDto pd = purchaseMapper.convertToRejectedDto(p);
+				//rejectDto.add(pd);
 			}
 			
 			return rejectDto;
@@ -64,7 +64,7 @@ public class PurchaseOrderRejectedManager implements IPurchaseOrderRejectedManag
 		}
 
 		@Override
-	public List<RejectedDto> getRejected() {
+		public List<RejectedDto> getRejected() {
 			List<PurchaseOrder> purchaseOrderList = new ArrayList<>();
 
 			List<RejectedDto> rejectedDto = new ArrayList<>();

@@ -95,16 +95,8 @@ public class PurchasedOrderDraftsController
 	   public ResponseEntity<?> show()
 	   {
 		   ResponseEntity response;
-			   try
-	   			{
-				   response = new ResponseEntity(purchaseorder.showByStatus(),HttpStatus.OK);
-	   			}
-			   catch (InventoryException e)
-				{
-					response = new ResponseEntity(e.getMessage(), HttpStatus.OK);
-					e.printStackTrace();
-				}
-				return response;	
+		   response = new ResponseEntity(purchaseOrderDraftsManager.getDrafts(),HttpStatus.OK);
+		   return response;
 	   }
 
 	@GetMapping("view/total")

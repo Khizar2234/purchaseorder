@@ -39,13 +39,8 @@ public class PurchaseOrderApprovedController {
 	@Operation(summary = "Showing the Items Which are in Approve Section")
 	public ResponseEntity<?> showByStatus() {
 		ResponseEntity response;
-		try {
-			response = new ResponseEntity(poapproved.showByStatus(), HttpStatus.OK);
+		response = new ResponseEntity(poapproved.getApproved(), HttpStatus.OK);
 
-		} catch (InventoryException e) {
-			response = new ResponseEntity(e.getMessage(), HttpStatus.OK);
-			e.printStackTrace();
-		}
 		return response;
 	}
 
