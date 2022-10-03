@@ -7,8 +7,8 @@ import javax.annotation.processing.Generated;
 
 @Generated(
     value = "org.mapstruct.ap.MappingProcessor",
-    date = "2022-10-02T13:11:50+0530",
-    comments = "version: 1.4.2.Final, compiler: Eclipse JDT (IDE) 1.4.50.v20210914-1429, environment: Java 17.0.2 (Oracle Corporation)"
+    date = "2022-10-03T20:34:09+0530",
+    comments = "version: 1.4.2.Final, compiler: javac, environment: Java 17.0.2 (Oracle Corporation)"
 )
 public class ProductMapperImpl implements ProductMapper {
 
@@ -41,15 +41,15 @@ public class ProductMapperImpl implements ProductMapper {
 
         Product product = new Product();
 
-        product.setPricePerUnit( addp.getPricePerUnit() );
-        product.setProductCode( addp.getProductCode() );
-        product.setProductEffectiveDate( addp.getProductEffectiveDate() );
         product.setProductId( addp.getProductId() );
+        product.setProductCode( addp.getProductCode() );
         product.setProductName( addp.getProductName() );
         product.setProductType( addp.getProductType() );
-        product.setProductVatTax( addp.getProductVatTax() );
-        product.setQty( addp.getQty() );
+        product.setPricePerUnit( addp.getPricePerUnit() );
         product.setUnitMeasurement( addp.getUnitMeasurement() );
+        product.setQty( addp.getQty() );
+        product.setProductEffectiveDate( addp.getProductEffectiveDate() );
+        product.setProductVatTax( addp.getProductVatTax() );
 
         return product;
     }

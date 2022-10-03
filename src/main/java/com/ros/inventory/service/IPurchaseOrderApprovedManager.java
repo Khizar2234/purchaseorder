@@ -1,7 +1,9 @@
 package com.ros.inventory.service;
 
 import java.util.List;
+import java.util.UUID;
 
+import com.ros.inventory.entities.Product;
 import org.springframework.util.MultiValueMap;
 
 import com.ros.inventory.Exception.InventoryException;
@@ -20,7 +22,7 @@ public interface IPurchaseOrderApprovedManager {
 	//List<ApprovedDto> show()throws InventoryException;
 	
 	//showing the product details
-	List<ProductPDto> showProduct() throws InventoryException;
+	List<ProductPDto> showProduct(UUID purchasedId) throws InventoryException;
 	
 	List<ApprovedDto>showByStatus() throws InventoryException;
 	
@@ -28,15 +30,18 @@ public interface IPurchaseOrderApprovedManager {
 	List<ApproveViewDto> showApprove() throws InventoryException;
 	
 	//showing the delivery detail
-	List<DeliveryDto>showDelivery() throws InventoryException;
+	List<ProductPDto>showDelivery(UUID purchasedId) throws InventoryException;
 	//showing invoice details
-	List<InvoicePDto> showInvoice() throws InventoryException;
+	List<InvoicePDto> showInvoice(UUID purchasedId) throws InventoryException;
 
 	String setExported() throws InventoryException;
 	
-	//List<AttachmentsDto>showAttachments()throws InventoryException;
+	List<AttachmentsDto>showAttachments()throws InventoryException;
 
-	
-	
+	double approvedTotal();
+
+	List<ApprovedDto> getApproved();
+
+	Product setProductPrice(Product product);
 
 }

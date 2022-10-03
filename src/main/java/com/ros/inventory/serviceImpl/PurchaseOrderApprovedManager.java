@@ -2,8 +2,11 @@ package com.ros.inventory.serviceImpl;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
+import com.ros.inventory.Repository.SupplierRepository;
+import com.ros.inventory.entities.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -14,23 +17,14 @@ import com.ros.inventory.controller.dto.ApproveViewDto;
 import com.ros.inventory.controller.dto.ApprovedDto;
 import com.ros.inventory.controller.dto.AttachmentsDto;
 import com.ros.inventory.controller.dto.DeliveryDto;
-import com.ros.inventory.controller.dto.DraftsDto;
 import com.ros.inventory.controller.dto.InvoicePDto;
-import com.ros.inventory.controller.dto.ProductDto;
 import com.ros.inventory.controller.dto.ProductPDto;
-import com.ros.inventory.controller.dto.RejectedDto;
-import com.ros.inventory.entities.Attachments;
-import com.ros.inventory.entities.OrderStatus;
-import com.ros.inventory.entities.Product;
-import com.ros.inventory.entities.PurchaseOrder;
 import com.ros.inventory.mapper.ApprovedMapper;
 import com.ros.inventory.mapper.ApprovedViewMapper;
 import com.ros.inventory.mapper.AttachmentsMapper;
 import com.ros.inventory.mapper.DeliverMapper;
 import com.ros.inventory.mapper.InvoicePMapper;
-import com.ros.inventory.mapper.ProductMapper;
 import com.ros.inventory.mapper.ProductPMapper;
-import com.ros.inventory.mapper.PurchaseOrderMapper;
 import com.ros.inventory.service.IPurchaseOrderApprovedManager;
 @Service
 public class PurchaseOrderApprovedManager implements IPurchaseOrderApprovedManager{
@@ -45,7 +39,10 @@ public class PurchaseOrderApprovedManager implements IPurchaseOrderApprovedManag
 	    private ProductRepository productRepo;
 	    @Autowired
 	    private ProductPMapper productpmapper;
-	    
+
+		@Autowired
+		private SupplierRepository supplierRepository;
+
 	    @Autowired
 	    private DeliverMapper dmapper;
 	    
@@ -97,57 +94,63 @@ public class PurchaseOrderApprovedManager implements IPurchaseOrderApprovedManag
 	
 		/*......Showing the Product Details......................... */
 		@Override
-		public List<ProductPDto> showProduct() throws InventoryException {
+		public List<ProductPDto> showProduct(UUID purchasedId) throws InventoryException {
 			// TODO Auto-generated method stub
-			List<Product> productFromDB=productRepo.getAll();
-			if (productFromDB == null || productFromDB.size() == 0) {
+			PurchaseOrder purchaseFromDB=purchaseRepo.getById(purchasedId);
+			if (purchaseFromDB == null ) {
 				throw new InventoryException(" No PurchaseOrder Is Present");
 			}
-			List<ProductPDto> productPDto = new ArrayList<ProductPDto>();
-			for (Product p : productFromDB) {
-				ProductPDto pd = productpmapper.convertToPurchasePDto(p);
-				productPDto.add(pd);
-			}
+			List<ProductPDto> products=new ArrayList<>();
+			//for(PurchaseOrder order: purchaseFromDB)
 
-			return productPDto;
+			//{
+			List<Product> prods=purchaseFromDB.getSupplier().getProducts();
+			for(Product prod:prods)
+			{
+				products.add(productpmapper.convertToPurchasePDto(prod));
+			}
+			//}
+			return products;
 		}
 /*.......................Showing Delivery Details............................ */
-		@Override
-		public List<DeliveryDto> showDelivery() throws InventoryException {
-			// TODO Auto-generated method stub
-			List<Product> purchaseFromDB=productRepo.getAll();
-				
-			if (purchaseFromDB == null || purchaseFromDB.size() == 0) {
-				throw new InventoryException(" No PurchaseOrder Is Present");
-			}
-			List<DeliveryDto> deliverDto = new ArrayList<DeliveryDto>();
-			for (Product p : purchaseFromDB) {
-				DeliveryDto pd = dmapper.convertToDeliveryDto(p);
-						//.convertToDeliveryDto(p);
-				deliverDto.add(pd);
-			}
-
-			return deliverDto;
+	@Override
+	public List<ProductPDto> showDelivery(UUID purchasedId) throws InventoryException {
+		// TODO Auto-generated method stub
+		PurchaseOrder purchaseFromDB=purchaseRepo.getById(purchasedId);
+		if (purchaseFromDB == null ) {
+			throw new InventoryException(" No PurchaseOrder Is Present");
 		}
+		List<ProductPDto> productPDtoList=new ArrayList<>();
+		List<Product> prods=purchaseFromDB.getSupplier().getProducts();
+		for(Product prod:prods) {
+		//DeliveryDto pd = dmapper.convertToDeliveryDto(prod);
+		//ProductPDto pd = productpmapper.convertToPurchasePDto(pd);
+		//.convertToDeliveryDto(p);
+		productPDtoList.add(productpmapper.convertToPurchasePDto(prod));
+		}
+		return productPDtoList;
+	}
 		
 
 /*............................Showing Invoice Details........................... */
-		
-		@Override
-		public List<InvoicePDto> showInvoice() throws InventoryException {
-			// TODO Auto-generated method stub
-			List<Product> productFromDB=productRepo.getAll();
-			if (productFromDB == null || productFromDB.size() == 0) {
-				throw new InventoryException(" No PurchaseOrder Is Present");
-			}
-			List<InvoicePDto> invoiceDto = new ArrayList<InvoicePDto>();
-			for (Product p : productFromDB) {
-				InvoicePDto pd =imapper.convertToInvoicePDto(p);
-				invoiceDto.add(pd);
-			}
 
-			return invoiceDto;
+	@Override
+	public List<InvoicePDto> showInvoice(UUID purchasedId) throws InventoryException {
+		// TODO Auto-generated method stub
+		PurchaseOrder purchaseFromDB=purchaseRepo.getById(purchasedId);
+		if (purchaseFromDB == null ) {
+			throw new InventoryException(" No PurchaseOrder Is Present");
 		}
+		List<InvoicePDto> invoiceDto=new ArrayList<>();
+
+		List<Product> prods=purchaseFromDB.getSupplier().getProducts();
+
+		for(Product prod:prods) {
+			InvoicePDto pd = imapper.convertToInvoicePDto(prod);
+			invoiceDto.add(pd);
+		}
+		return invoiceDto;
+	}
 
 //------------------------ Set Status to Exported ------------------------//
 
@@ -173,33 +176,68 @@ public class PurchaseOrderApprovedManager implements IPurchaseOrderApprovedManag
 			return "Exported";
 		}
 
+		@Override
+		public double approvedTotal() {
+			List<PurchaseOrder> purchaseOrderList = purchaseRepo.showByStatus("approved");
+			double total = 0.0;
 
+			for (PurchaseOrder purchaseOrder : purchaseOrderList) {
+				total = total + purchaseOrder.getTotalAmount();
+			}
+
+			return total;
+		}
+
+		@Override
+		public List<ApprovedDto> getApproved() {
+			List<PurchaseOrder> purchaseOrderList = new ArrayList<>();
+
+			List<ApprovedDto> approvedDtoList = new ArrayList<>();
+
+			purchaseOrderList = purchaseRepo.getAllByPurchaseOrderStatus(OrderStatus.approved);
+
+			for (PurchaseOrder order : purchaseOrderList) {
+				ApprovedDto approved = new ApprovedDto();
+
+				approved.setPurchasedNumber(order.getPurchasedId());
+				approved.setPurchaseDate(String.valueOf(order.getPurchaseOrderDate()));
+
+				Supplier supplier = supplierRepository.getBySupplierId(order.getSupplier().getSupplierId());
+
+				approved.setSupplierName(supplier.getSupplierBasic().getSupplierBusinessName());
+				approved.setSupplierType(String.valueOf(supplier.getSupplierType()));
+				approved.setValue(order.getTotalAmount());
+				approved.setStatus(order.getPurchaseOrderStatus());
+
+				approvedDtoList.add(approved);
+			}
+
+			return approvedDtoList;
+		}
 
 		
 /*.....................Showing Attachments....................................*/
 		
-//		@Override
-//		public List<AttachmentsDto> showAttachments() throws InventoryException {
-//			// TODO Auto-generated method stub
-//			List<Attachments> attachmentFromDB=purchaseRepo.getAllAttachments();
-//			if (attachmentFromDB == null || attachmentFromDB.size() == 0) {
-//				throw new InventoryException(" No PurchaseOrder Is Present");
-//			}
-//			List<AttachmentsDto> attachmentDto = new ArrayList<AttachmentsDto>();
-//			for (Attachments a : attachmentFromDB) {
-//				AttachmentsDto ad = aMapper.convertToAttachmentsDto(a);
-//				attachmentDto.add(ad);
-//			}
-//
-//			return attachmentDto;
-//		}
-//		
-		
+	@Override
+		public List<AttachmentsDto> showAttachments() throws InventoryException {
+			// TODO Auto-generated method stub
+			List<Attachments> attachmentFromDB=purchaseRepo.getAllAttachments();
+			if (attachmentFromDB == null || attachmentFromDB.size() == 0) {
+				throw new InventoryException(" No PurchaseOrder Is Present");
+			}
+			List<AttachmentsDto> attachmentDto = new ArrayList<AttachmentsDto>();
+			for (Attachments a : attachmentFromDB) {
+				AttachmentsDto ad = aMapper.convertToAttachmentsDto(a);
+				attachmentDto.add(ad);
+			}
 
-		
-		
-		
-		
-		
+			return attachmentDto;
+		}
+
+		@Override
+		public Product setProductPrice(Product product) {
+			productRepo.save(product);
+			return product;
+		}
 
 }

@@ -20,5 +20,6 @@ public class DraftsDto {
 		private double value;
 		 private String supplierName;
 		 private String supplierType;
+		 private String totalAmount;
 
 }

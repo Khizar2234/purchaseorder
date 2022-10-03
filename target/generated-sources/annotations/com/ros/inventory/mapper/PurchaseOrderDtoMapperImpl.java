@@ -8,8 +8,8 @@ import javax.annotation.processing.Generated;
 
 @Generated(
     value = "org.mapstruct.ap.MappingProcessor",
-    date = "2022-10-02T13:11:50+0530",
-    comments = "version: 1.4.2.Final, compiler: Eclipse JDT (IDE) 1.4.50.v20210914-1429, environment: Java 17.0.2 (Oracle Corporation)"
+    date = "2022-10-03T20:34:09+0530",
+    comments = "version: 1.4.2.Final, compiler: javac, environment: Java 17.0.2 (Oracle Corporation)"
 )
 public class PurchaseOrderDtoMapperImpl implements PurchaseOrderDtoMapper {
 
@@ -38,9 +38,9 @@ public class PurchaseOrderDtoMapperImpl implements PurchaseOrderDtoMapper {
 
         PurchaseOrder purchaseOrder = new PurchaseOrder();
 
+        purchaseOrder.setPurchasedId( purchase.getPurchasedId() );
         purchaseOrder.setPurchaseOrderDate( purchase.getPurchaseOrderDate() );
         purchaseOrder.setPurchaseOrderStatus( purchase.getPurchaseOrderStatus() );
-        purchaseOrder.setPurchasedId( purchase.getPurchasedId() );
         purchaseOrder.setTotalAmount( purchase.getTotalAmount() );
 
         return purchaseOrder;

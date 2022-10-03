@@ -1,9 +1,14 @@
 package com.ros.inventory.serviceImpl;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
+//import com.google.gson.Gson;
+import com.ros.inventory.Repository.SupplierRepository;
+import com.ros.inventory.controller.dto.purchaseOrderDto;
+import com.ros.inventory.entities.Supplier;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.stereotype.Service;
@@ -12,21 +17,24 @@ import com.ros.inventory.Exception.InventoryException;
 import com.ros.inventory.Repository.PurchaseRepository;
 //import com.ros.inventory.controller.dto.ApprovalStatus;
 import com.ros.inventory.controller.dto.DraftsDto;
-import com.ros.inventory.controller.dto.SupplierDto;
 import com.ros.inventory.entities.OrderStatus;
 import com.ros.inventory.entities.PurchaseOrder;
-import com.ros.inventory.entities.Supplier;
 import com.ros.inventory.mapper.PurchaseOrderMapper;
-import com.ros.inventory.service.IPurchaseOrderManager;
 import com.ros.inventory.service.IPurchasedOrderSubmittedManager;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 
 @Service
 public class PurchasedOrderSubmittedManager implements IPurchasedOrderSubmittedManager
 {
     @Autowired
 	private PurchaseRepository purchaseRepo;
+
     @Autowired
     private PurchaseOrderMapper purchaseMapper;
+
+	@Autowired
+	private SupplierRepository supplierRepository;
 	
 	@Override
 	public PurchaseOrder save(PurchaseOrder purchase) throws InventoryException 
@@ -48,9 +56,6 @@ public class PurchasedOrderSubmittedManager implements IPurchasedOrderSubmittedM
 	}
 	
 
-
-	
-
 	/*..........Saving as a Draft....................*/
 	 @Override
 		public List<DraftsDto> showByStatus() throws InventoryException {
@@ -69,6 +74,21 @@ public class PurchasedOrderSubmittedManager implements IPurchasedOrderSubmittedM
 			
 			return draftDto;
 		}
+
+		@Override
+		public double submittedTotal() {
+
+		List<PurchaseOrder>purchaseFromDB=purchaseRepo.showByStatus("submited");
+
+		double total =0;
+
+		List<DraftsDto> draftDto = new ArrayList<DraftsDto>();
+		for (PurchaseOrder p : purchaseFromDB) {
+			total = total + p.getTotalAmount();
+		}
+
+		return total;
+	}
 	 	@Override
 	public PurchaseOrder delete(UUID id) throws InventoryException {
 		// TODO Auto-generated method stub
@@ -141,10 +161,31 @@ public class PurchasedOrderSubmittedManager implements IPurchasedOrderSubmittedM
 		return "Rejected";
 
 	}
-	
 
+	@Override
+	public List<DraftsDto> getSubmitted() {
+		List<PurchaseOrder> purchaseOrderList = new ArrayList<>();
 
+		List<DraftsDto> draftsDtoList = new ArrayList<>();
 
-	
+		purchaseOrderList = purchaseRepo.getAllByPurchaseOrderStatus(OrderStatus.submited);
+
+		for (PurchaseOrder order : purchaseOrderList) {
+			DraftsDto draft = new DraftsDto();
+
+			draft.setPurchasedNumber(order.getPurchasedId());
+			draft.setPurchaseDate(String.valueOf(order.getPurchaseOrderDate()));
+
+			Supplier supplier = supplierRepository.getBySupplierId(order.getSupplier().getSupplierId());
+
+			draft.setSupplierName(supplier.getSupplierBasic().getSupplierBusinessName());
+			draft.setSupplierType(String.valueOf(supplier.getSupplierType()));
+			draft.setValue(order.getTotalAmount());
+
+			draftsDtoList.add(draft);
+		}
+
+		return draftsDtoList;
+	}
 
 }

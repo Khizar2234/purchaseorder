@@ -6,14 +6,14 @@ spring:
   application:
     name: InventoryService
   datasource:
-    url: jdbc:postgresql://inventory.postgres.database.azure.com:5432/Inventory-Purchaseorder?CreateDatabaseIfNotExist=true
+    url: jdbc:postgresql://inventory.postgres.database.azure.com:5432/Inventory-Purchaseorder
     username: adminroot
     password: password@123
     initialization-mode: always
     driver-class-name: org.postgresql.Driver
   jpa:
     hibernate:
-      ddl-auto: update
+      ddl-auto: create-drop
     properties:
       hibernate:
         dialect: org.hibernate.dialect.PostgreSQLDialect
@@ -23,7 +23,7 @@ spring:
       enabled: false
       
 swagger:
-  url: https://purchaseorder-service.ros.skillassure.com/inventory
+  url: https://inventory-service.test.restaurantonesolution.com/inventory
   
 eureka:
   client:

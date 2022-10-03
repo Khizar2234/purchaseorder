@@ -1,8 +1,16 @@
 package com.ros.inventory.controller;
 
+import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
+//import com.google.gson.Gson;
+import com.ros.inventory.Repository.PurchaseRepository;
+import com.ros.inventory.Repository.SupplierRepository;
+import com.ros.inventory.entities.OrderStatus;
+import com.ros.inventory.entities.Supplier;
+import com.ros.inventory.serviceImpl.PurchasedOrderSubmittedManager;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -20,7 +28,6 @@ import org.springframework.web.bind.annotation.RestController;
 import com.ros.inventory.Exception.InventoryException;
 import com.ros.inventory.controller.dto.DraftsDto;
 import com.ros.inventory.entities.PurchaseOrder;
-import com.ros.inventory.service.IPurchaseOrderManager;
 import com.ros.inventory.service.IPurchasedOrderSubmittedManager;
 
 import io.swagger.v3.oas.annotations.Operation;
@@ -32,6 +39,12 @@ public class PurchasedOrderSubmittedController {
 	
 	@Autowired
 	private  IPurchasedOrderSubmittedManager purchaseorderSubmitted;
+
+	@Autowired
+	private PurchaseRepository purchaseRepository;
+
+	@Autowired
+	private PurchasedOrderSubmittedManager purchasedOrderSubmittedManager;
 	
 	/*.............Saving Purchase Order in Submitted section........*/
 	@PostMapping("/add")
@@ -58,17 +71,25 @@ public class PurchasedOrderSubmittedController {
 	   public ResponseEntity<?> show()
 	   {
 		   ResponseEntity response;
-			   try
-	   			{
-				   response = new ResponseEntity(purchaseorderSubmitted.showByStatus(),HttpStatus.OK);
-	   			}
-			   catch (InventoryException e)
-				{
-					response = new ResponseEntity(e.getMessage(), HttpStatus.OK);
-					e.printStackTrace();
-				}
-				return response;	
+		   response = new ResponseEntity(purchaseorderSubmitted.getSubmitted(),HttpStatus.OK);
+		   return response;
 	   }
+
+	@GetMapping("view/total")
+	@Operation(summary = "View total amount of submitted orders")
+	public double showTotal() throws InventoryException {
+		return purchasedOrderSubmittedManager.submittedTotal();
+	}
+
+	//Drafts information
+	/*@GetMapping(value = "/getSubmitted")
+	@Operation(summary = "info of all submitted POs")
+	public List<DraftsDto> getSubmitted() {
+		return purchaseorderSubmitted.getSubmitted();
+	}
+
+	 */
+
 /* ..............  Rejecting the Purchase Order in Submitted ........ */
 	   @DeleteMapping("/delete/{id}")
 	   @ResponseBody

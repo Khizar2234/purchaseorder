@@ -17,6 +17,7 @@ public interface DeliverMapper {
 	@Mapping(source = "product.productCode", target = "productCode")
 	@Mapping(source = "product.productName", target = "productName")
 	//@Mapping(source = "produt.qty" , target="qty")
+	@Mapping(source = "product.pricePerUnit", target = "productPrice")
 	@Mapping(source = "product.qtyReceived",target="qtyReceived")
 	@Mapping(source = "product.initialPrice",target="initialPrice")
 	@Mapping(source = "product.finalPrice",target="finalPrice")

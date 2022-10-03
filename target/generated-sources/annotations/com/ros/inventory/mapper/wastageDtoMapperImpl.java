@@ -6,8 +6,8 @@ import javax.annotation.processing.Generated;
 
 @Generated(
     value = "org.mapstruct.ap.MappingProcessor",
-    date = "2022-10-02T13:11:50+0530",
-    comments = "version: 1.4.2.Final, compiler: Eclipse JDT (IDE) 1.4.50.v20210914-1429, environment: Java 17.0.2 (Oracle Corporation)"
+    date = "2022-10-03T20:34:09+0530",
+    comments = "version: 1.4.2.Final, compiler: javac, environment: Java 17.0.2 (Oracle Corporation)"
 )
 public class wastageDtoMapperImpl implements wastageDtoMapper {
 
@@ -37,12 +37,12 @@ public class wastageDtoMapperImpl implements wastageDtoMapper {
 
         Wastage wastage = new Wastage();
 
-        wastage.setPricePerUnit( product.getPricePerUnit() );
+        wastage.setWastageId( product.getWastageId() );
         wastage.setProductCode( product.getProductCode() );
         wastage.setProductName( product.getProductName() );
-        wastage.setQty( product.getQty() );
+        wastage.setPricePerUnit( product.getPricePerUnit() );
         wastage.setUnitMeasurement( product.getUnitMeasurement() );
-        wastage.setWastageId( product.getWastageId() );
+        wastage.setQty( product.getQty() );
 
         return wastage;
     }

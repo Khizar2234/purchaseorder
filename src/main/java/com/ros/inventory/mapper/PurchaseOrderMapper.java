@@ -14,6 +14,8 @@ public interface PurchaseOrderMapper {
 	@Mapping(source = "supplier.supplierType", target = "supplierType")
 	@Mapping(source="purchase.purchasedId",target="purchasedNumber")
 	@Mapping(source="purchase.purchaseOrderDate",target="purchaseDate")
+	@Mapping(source = "purchase.totalAmount", target = "totalAmount")
+
 	DraftsDto convertToPurchaseDto(PurchaseOrder purchase);
 	PurchaseOrder convertToPurchaseOrder(DraftsDto draftDto);
 

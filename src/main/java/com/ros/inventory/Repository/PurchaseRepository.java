@@ -4,6 +4,7 @@ import java.time.LocalDate;
 import java.util.List;
 import java.util.UUID;
 
+import com.ros.inventory.entities.OrderStatus;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
@@ -50,7 +51,13 @@ public interface PurchaseRepository extends JpaRepository<PurchaseOrder,UUID>
 	@Query(value="select * from purchase_order where purchase_order_status =:status and purchase_order_date >:date Order By purchase_order_status ASC limit 1",nativeQuery=true)
     PurchaseOrder getStartSessionDate(@Param("status") String status,@Param("date") LocalDate date);
 
-   
+	List<PurchaseOrder> getAllByPurchaseOrderStatus(OrderStatus status);
 
+	@Query(value="select * from purchase_order p join supplier s on p.supplier_id = s.supplier_id where supplier_type = :supplier_type",nativeQuery=true)
+	List<PurchaseOrder> getAllBySupplierType(@Param("supplier_type") String supplierType);
+
+	//Return attachments details
+	@Query(value="select * from attachments ",nativeQuery=true)
+	List<Attachments> getAllAttachments(@Param("purchase_id") UUID purchaseID);
 
 }
