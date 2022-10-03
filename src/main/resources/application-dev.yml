@@ -23,7 +23,7 @@ spring:
       enabled: false
       
 swagger:
-  url: https://purchaseorder-service-ros.skillassure.com/inventory
+  url: https://purchaseorder-service.ros.skillassure.com/inventory
   
 eureka:
   client:
